@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import gsap from 'gsap'
 import { ExternalLink } from 'lucide-react'
@@ -23,8 +24,6 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
-
-
 
 export function Hero() {
   const heroRef = useRef<HTMLDivElement>(null)
@@ -57,9 +56,11 @@ export function Hero() {
         </p>
         
         <div className="hero-stagger opacity-0 flex flex-col sm:flex-row items-center gap-4">
-          <Button size="lg" className="rounded-full px-8 text-base font-medium shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_30px_rgba(255,255,255,0.25)] border border-white/10 transition-shadow duration-300">
-            Browse Templates
-          </Button>
+          <Link to="/pricing">
+            <Button size="lg" className="rounded-full px-8 text-base font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:shadow-[0_0_35px_rgba(37,99,235,0.6)] border-none transition-all duration-300">
+              Go Premium
+            </Button>
+          </Link>
           <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium bg-transparent border-border/80 hover:bg-white/5 transition-colors">
             View Demo
           </Button>

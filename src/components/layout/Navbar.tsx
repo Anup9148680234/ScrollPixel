@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 
 export function Navbar() {
@@ -5,19 +6,26 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-border/20 bg-background/60 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-display font-bold text-xl tracking-tight text-white">ScrollPixel</span>
+          <Link to="/" className="font-display font-bold text-xl tracking-tight text-white hover:opacity-80 transition-opacity">
+            ScrollPixel
+          </Link>
         </div>
         
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <a href="#templates" className="hover:text-foreground transition-colors">Templates</a>
-          <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
-          <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
+          <Link to="/" className="hover:text-foreground transition-colors">Templates</Link>
+          <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+          <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
         </div>
         
         <div className="flex items-center gap-4">
-          <Button variant="default" size="sm" className="rounded-full shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.15)] transition-all font-medium">
-            Browse Templates
-          </Button>
+          <Link to="/auth" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
+            Log in
+          </Link>
+          <Link to="/pricing">
+            <Button size="sm" className="rounded-full font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] transition-all">
+              Go Premium
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>
