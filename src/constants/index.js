@@ -14,10 +14,10 @@ export const TEMPLATES = [
     tags: ["React", "Tailwind", "GSAP"]
   },
   {
-    title: "Creative Agency",
-    description: "Premium animated dark-mode website using sleek scrolling effects and interactive glassmorphism.",
+    title: "AI Web Agency",
+    description: "Sleek and modern landing page for an AI web agency, featuring smooth animations and a clean design.",
     repo: "https://github.com/anup2/",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop",
-    tags: ["GSAP", "React", "CSS"]
+    image: "/gifs/ai-web-agency-template.gif",
+    tags: ["Framer", "React", "Tailwind"]
   }
 ]
