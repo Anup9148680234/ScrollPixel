@@ -1,6 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
-import { Button } from "@/components/ui/button"
 import gsap from 'gsap'
 import { ExternalLink } from 'lucide-react'
 import { TEMPLATES } from '@/constants'
@@ -55,7 +53,7 @@ export function Hero() {
           Production-ready templates built with motion, performance, and modern design in mind.
         </p>
         
-        <div className="hero-stagger opacity-0 flex flex-col sm:flex-row items-center gap-4">
+        {/* <div className="hero-stagger opacity-0 flex flex-col sm:flex-row items-center gap-4">
           <Link to="/pricing">
             <Button size="lg" className="rounded-full px-8 text-base font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:shadow-[0_0_35px_rgba(37,99,235,0.6)] border-none transition-all duration-300">
               Go Premium
@@ -64,7 +62,7 @@ export function Hero() {
           <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium bg-transparent border-border/80 hover:bg-white/5 transition-colors">
             View Demo
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Template Grid underneath */}
@@ -84,6 +82,7 @@ export function Hero() {
               <img 
                 src={template.image} 
                 alt={template.title} 
+                loading='lazy'
                 className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-105" 
               />
               <div className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 shadow-lg">
@@ -98,7 +97,7 @@ export function Hero() {
               </div>
               
               <div className="flex flex-wrap gap-1.5 mt-auto">
-                {template.tags.map(tag => (
+                {template.tags.map((tag) => (
                   <span key={tag} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/5 text-muted-foreground border border-white/10">
                     {tag}
                   </span>

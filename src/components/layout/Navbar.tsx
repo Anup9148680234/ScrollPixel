@@ -18,12 +18,10 @@ export function Navbar() {
         </div>
         
         <div className="flex items-center gap-4">
-          <Link to="/auth" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
-            Log in
-          </Link>
-          <Link to="/pricing">
+         
+          <Link to="/contact">
             <Button size="sm" className="rounded-full font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_20px_rgba(37,99,235,0.5)] transition-all">
-              Go Premium
+              Custom Request
             </Button>
           </Link>
         </div>

@@ -71,3 +71,15 @@ export default defineConfig([
   },
 ])
 ```
+
+## EmailJS contact form
+
+The contact page now submits through EmailJS using the browser SDK.
+
+1. Copy `.env.example` to `.env`.
+2. Fill in `VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, and `VITE_EMAILJS_PUBLIC_KEY` from your EmailJS dashboard.
+3. In your EmailJS template, use these variables:
+
+`{{user_name}}`, `{{user_email}}`, `{{message}}`, `{{contact_time}}`
+
+4. Run the app with `npm run dev`.
