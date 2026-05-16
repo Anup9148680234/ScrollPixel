@@ -1,4 +1,11 @@
-import { useEffect, useRef } from 'react'
+import React, {
+  memo,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import gsap from 'gsap'
 import { ExternalLink } from 'lucide-react'
 import { TEMPLATES } from '@/constants'
@@ -23,24 +30,174 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
+function useInView(threshold = 0.2) {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold }
+    )
+
+    if (ref.current) observer.observe(ref.current)
+
+    return () => observer.disconnect()
+  }, [threshold])
+
+  return { ref, isVisible }
+}
+
+const TemplateCard = memo(({ template }: any) => {
+  const { ref, isVisible } = useInView(0.15)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+
+    if (!video) return
+
+    if (isVisible) {
+      video.play().catch(() => {})
+    } else {
+      video.pause()
+    }
+  }, [isVisible])
+
+  return (
+    <div
+      ref={ref}
+      className="hero-stagger opacity-0 group relative flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 hover:shadow-2xl hover:shadow-white/5 overflow-hidden backdrop-blur-md [content-visibility:auto]"
+      style={{
+        containIntrinsicSize: '400px',
+      }}
+    >
+      {/* Hover Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none z-10" />
+
+      {/* Preview Media */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-white/5 border-b border-white/5">
+        {isVisible ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-105"
+          >
+            <source src={template.video} type="video/webm" />
+            <source src={template.videoMp4} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={template.poster}
+            alt={template.title}
+            loading="lazy"
+            className="object-cover w-full h-full"
+          />
+        )}
+
+        {/* Live Preview CTA */}
+        <a
+          href={template.live}
+          target="_blank"
+          rel="noreferrer"
+          className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 shadow-lg z-20"
+        >
+          <ExternalLink className="w-4 h-4 text-white" />
+        </a>
+      </div>
+
+      {/* Content */}
+      <div className="p-4 flex flex-col flex-grow">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-base font-semibold text-foreground tracking-tight">
+            {template.title}
+          </h3>
+
+          {/* Repo CTA */}
+          <a
+            href={template.repo}
+            target="_blank"
+            rel="noreferrer"
+            className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <GithubIcon className="w-4 h-4" />
+          </a>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5 mt-4">
+          {template.tags.map((tag: string) => (
+            <span
+              key={tag}
+              className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/5 text-muted-foreground border border-white/10"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+})
+
+TemplateCard.displayName = 'TemplateCard'
+
+function TemplateGrid() {
+  return (
+    <div className="w-full max-w-6xl mx-auto mt-24 mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 z-10">
+      {TEMPLATES.map((template, i) => (
+        <TemplateCard key={i} template={template} />
+      ))}
+    </div>
+  )
+}
+
+function SkeletonGrid() {
+  return (
+    <div className="w-full max-w-6xl mx-auto mt-24 mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="h-[320px] rounded-2xl border border-white/10 bg-white/[0.03] animate-pulse"
+        />
+      ))}
+    </div>
+  )
+}
+
 export function Hero() {
   const heroRef = useRef<HTMLDivElement>(null)
-  
-  useEffect(() => {
+
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.hero-stagger', 
-        { y: 30, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 0.1 }
+        '.hero-stagger',
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.12,
+          ease: 'power3.out',
+          delay: 0.1,
+        }
       )
     }, heroRef)
+
     return () => ctx.revert()
   }, [])
 
   return (
-    <section ref={heroRef} className="relative flex flex-col items-center w-full min-h-[calc(100vh-4rem)] pt-24 pb-20 px-4 overflow-hidden">
-      
-      {/* Subtle top glow as secondary accent to the CSS gradient */}
+    <section
+      ref={heroRef}
+      className="relative flex flex-col items-center w-full min-h-[calc(100vh-4rem)] pt-24 pb-20 px-4 overflow-hidden"
+    >
+      {/* Ambient Glow */}
       <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-white/5 blur-[100px] rounded-full pointer-events-none" />
 
       {/* Hero Content */}
@@ -48,66 +205,17 @@ export function Hero() {
         <h1 className="hero-stagger opacity-0 max-w-4xl text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-foreground mb-6 leading-[1.1] font-display">
           Scroll-driven websites that actually convert.
         </h1>
-        
+
         <p className="hero-stagger opacity-0 max-w-xl text-lg md:text-xl text-muted-foreground mb-10 leading-relaxed font-sans mt-2">
-          Production-ready templates built with motion, performance, and modern design in mind.
+          Production-ready templates built with motion, performance, and modern
+          design in mind.
         </p>
-        
-        {/* <div className="hero-stagger opacity-0 flex flex-col sm:flex-row items-center gap-4">
-          <Link to="/pricing">
-            <Button size="lg" className="rounded-full px-8 text-base font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:shadow-[0_0_35px_rgba(37,99,235,0.6)] border-none transition-all duration-300">
-              Go Premium
-            </Button>
-          </Link>
-          <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium bg-transparent border-border/80 hover:bg-white/5 transition-colors">
-            View Demo
-          </Button>
-        </div> */}
       </div>
 
-      {/* Template Grid underneath */}
-      <div className="w-full max-w-6xl mx-auto mt-24 mb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 z-10">
-        {TEMPLATES.map((template, i) => (
-          <a
-            key={i}
-            href={template.repo}
-            target="_blank"
-            rel="noreferrer"
-            className="hero-stagger opacity-0 group relative flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-0 transition-all duration-500 hover:bg-white/[0.04] hover:border-white/20 hover:shadow-2xl hover:shadow-white/5 overflow-hidden backdrop-blur-md"
-          >
-            {/* Hover Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
-            
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-white/5 mb-4 border border-white/5">
-              <img 
-                src={template.image} 
-                alt={template.title} 
-                loading='lazy'
-                className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-105" 
-              />
-              <div className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 shadow-lg">
-                <ExternalLink className="w-4 h-4 text-white" />
-              </div>
-            </div>
-            
-            <div className="p-3  pb-2 flex flex-col flex-grow">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-base font-semibold text-foreground tracking-tight">{template.title}</h3>
-                <GithubIcon className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-              </div>
-              
-              <div className="flex flex-wrap gap-1.5 mt-auto">
-                {template.tags.map((tag) => (
-                  <span key={tag} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/5 text-muted-foreground border border-white/10">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </a>
-        ))}
-      </div>
-      
+      {/* Templates */}
+      <Suspense fallback={<SkeletonGrid />}>
+        <TemplateGrid />
+      </Suspense>
     </section>
   )
 }
